@@ -224,12 +224,20 @@
     const sales_chart_options = {
         series: [
             {
-                name: 'Digital Goods',
-                data: [28, 48, 40, 19, 86, 27, 90],
+                name: 'pH',
+                data: [65, 59, 80, 81, 56, 55, 40], // Ejemplo de datos para pH
             },
             {
-                name: 'Electronics',
-                data: [65, 59, 80, 81, 56, 55, 40],
+                name: 'Turvidez',
+                data: [28, 48, 40, 19, 86, 27, 90], // Ejemplo de datos para Turvidez
+            },
+            {
+                name: 'Conductividad',
+                data: [80, 90, 70, 60, 55, 75, 95], // Ejemplo de datos para Conductividad
+            },
+            {
+                name: 'Nivel de agua',
+                data: [30, 35, 25, 40, 45, 38, 32], // Ejemplo de datos para Nivel de agua
             },
         ],
         chart: {
@@ -240,9 +248,9 @@
             },
         },
         legend: {
-            show: false,
+            show: true,
         },
-        colors: ['#0d6efd', '#20c997'],
+        colors: ['#0d6efd', '#20c997', '#ffc107', '#dc3545'],
         dataLabels: {
             enabled: false,
         },

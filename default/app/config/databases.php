@@ -8,19 +8,19 @@ return [
         /**
          * host: ip o nombre del host de la base de datos
          */
-        'host'     => 'localhost',
+        'host'     => '64.225.121.158',
         /**
          * username: usuario con permisos en la base de datos
          */
-        'username' => 'root', //no es recomendable usar el usuario root
+        'username' => 'web-rio', //no es recomendable usar el usuario root
         /**
          * password: clave del usuario de la base de datos
          */
-        'password' => '',
+        'password' => 'TU_CLAVE_WEB',
         /**
          * test: nombre de la base de datos
          */
-        'name'     => 'test',
+        'name'     => 'monitoreo_rio',
         /**
          * type: tipo de motor de base de datos (mysql, pgsql, oracle o sqlite)
          */
