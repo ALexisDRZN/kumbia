@@ -10,7 +10,7 @@
                 <!--begin::Small Box Widget 1-->
                 <div class="small-box text-bg-primary">
                     <div class="inner">
-                        <h3>150<sup class="fs-5">%</sup></h3>
+                        <h3><?= $medicion->ph ?><sup class="fs-5">%</sup></h3>
 
                         <p>PH</p>
                     </div>
@@ -58,7 +58,7 @@
                 <!--begin::Small Box Widget 2-->
                 <div class="small-box text-bg-success">
                     <div class="inner">
-                        <h3>53<sup class="fs-5">%</sup></h3>
+                        <h3><?= $medicion->turbidez ?><sup class="fs-5">%</sup></h3>
 
                         <p>Turvidez</p>
                     </div>
@@ -95,7 +95,7 @@
                 <!--begin::Small Box Widget 3-->
                 <div class="small-box text-bg-warning">
                     <div class="inner">
-                        <h3>500<sup class="fs-5">%</sup></h3>
+                        <h3><?= $medicion->conductividad ?><sup class="fs-5">%</sup></h3>
 
                         <p>Conductividad</p>
                     </div>
@@ -130,7 +130,7 @@
                 <!--begin::Small Box Widget 4-->
                 <div class="small-box text-bg-danger">
                     <div class="inner">
-                        <h3>40<sup class="fs-5">%</sup></h3>
+                        <h3><?= $medicion->nivel_agua ?><sup class="fs-5">%</sup></h3>
 
                         <p>Nivel de agua</p>
                     </div>
@@ -172,10 +172,10 @@
                     <div class="card-header">
                         <h3 class="card-title">Grafica General</h3>
                     </div>
-
                     <div class="card-body">
                         <div id="revenue-chart"></div>
                     </div>
+
                 </div>
                 <!-- /.card -->
 

@@ -217,27 +217,26 @@
 
 <!-- ChartJS -->
 <script>
-    // NOTICE!! DO NOT USE ANY OF THIS JAVASCRIPT
-    // IT'S ALL JUST JUNK FOR DEMO
-    // ++++++++++++++++++++++++++++++++++++++++++
+    // Recibe los datos desde PHP
+    const grafica = <?= $grafica ?>;
 
     const sales_chart_options = {
         series: [
             {
                 name: 'pH',
-                data: [65, 59, 80, 81, 56, 55, 40], // Ejemplo de datos para pH
+                data: grafica.ph,
             },
             {
                 name: 'Turvidez',
-                data: [28, 48, 40, 19, 86, 27, 90], // Ejemplo de datos para Turvidez
+                data: grafica.turbidez,
             },
             {
                 name: 'Conductividad',
-                data: [80, 90, 70, 60, 55, 75, 95], // Ejemplo de datos para Conductividad
+                data: grafica.conductividad,
             },
             {
                 name: 'Nivel de agua',
-                data: [30, 35, 25, 40, 45, 38, 32], // Ejemplo de datos para Nivel de agua
+                data: grafica.nivel_agua,
             },
         ],
         chart: {
@@ -259,30 +258,23 @@
         },
         xaxis: {
             type: 'datetime',
-            categories: [
-                '2023-01-01',
-                '2023-02-01',
-                '2023-03-01',
-                '2023-04-01',
-                '2023-05-01',
-                '2023-06-01',
-                '2023-07-01',
-            ],
+            categories: grafica.fechas,
         },
         tooltip: {
             x: {
-                format: 'MMMM yyyy',
+                format: 'yyyy-MM-dd HH:mm',
             },
         },
     };
 
-    const sales_chart = new ApexCharts(
-        document.querySelector('#revenue-chart'),
-        sales_chart_options,
-    );
-    sales_chart.render();
+    document.addEventListener('DOMContentLoaded', function() {
+        const sales_chart = new ApexCharts(
+            document.querySelector('#revenue-chart'),
+            sales_chart_options,
+        );
+        sales_chart.render();
+    });
 </script>
-
 <!-- jsvectormap -->
 <script
     src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"

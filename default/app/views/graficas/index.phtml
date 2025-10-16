@@ -170,7 +170,67 @@
             <!--end::Container-->
         </div>
         <!--end::App Content-->
+        <div class="app-content">
+            <!--begin::Container-->
+            <div class="container-fluid">
+                <!--begin::Row-->
+                <div class="row">
+                    <div class="col-12"> <!-- Cambiado a col-12 para ocupar todo el ancho -->
+                        <div class="card mb-4 w-100">
+                            <div class="card-header">
+                                <h3 class="card-title">Bordered Table</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="table-responsive"> <!-- Hace la tabla scrolleable si se desborda -->
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 10px">ID</th>
+                                            <th>Fecha</th>
+                                            <th>PH</th>
+                                            <th>Turvidez</th>
+                                            <th>Conductividad</th>
+                                            <th>Temperatura</th>
+                                            <th>Nivel de agua</th>
+                                            <th>Hora</th>
+                                            <th>Nivel de contaminacion</th>
+                                            <th style="width: 40px">%</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="align-middle">
+                                            <td>1.</td>
+                                            <td>10/10/2025</td>
+                                            <td>50%</td>
+                                            <td>20%</td>
+                                            <td>30%</td>
+                                            <td>15%</td>
+                                            <td>40%</td>
+                                            <td>12:00</td>
+                                            <td>
+                                                <div class="progress progress-xs">
+                                                    <div
+                                                            class="progress-bar progress-bar-danger"
+                                                            style="width: 55%"
+                                                    ></div>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge text-bg-danger">55%</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- /.table-responsive -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Row-->
+            </div>
+            <!--end::Container-->
+        </div>
     </main>
+
 
 <script
     src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
