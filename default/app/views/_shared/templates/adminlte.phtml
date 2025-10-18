@@ -217,62 +217,92 @@
 
 <!-- ChartJS -->
 <script>
-    // Recibe los datos desde PHP
-    const grafica = <?= $grafica ?>;
+    async function fetchGraficaData() {
+        const response = await fetch('/kumbia/index/datos_grafica');
+        if (!response.ok) {
+            console.error('Error al obtener datos de la gráfica');
+            return null;
+        }
+        return await response.json();
+    }
+
+    function convertirFechas(fechas) {
+        return fechas.map(f => f.replace(' ', 'T'));
+    }
 
     const sales_chart_options = {
         series: [
-            {
-                name: 'pH',
-                data: grafica.ph,
-            },
-            {
-                name: 'Turvidez',
-                data: grafica.turbidez,
-            },
-            {
-                name: 'Conductividad',
-                data: grafica.conductividad,
-            },
-            {
-                name: 'Nivel de agua',
-                data: grafica.nivel_agua,
-            },
+            { name: 'pH', data: [] },
+            { name: 'Turvidez', data: [] },
+            { name: 'Conductividad', data: [] },
+            { name: 'Nivel de agua', data: [] },
         ],
-        chart: {
-            height: 300,
-            type: 'area',
-            toolbar: {
-                show: false,
-            },
-        },
-        legend: {
-            show: true,
-        },
+        chart: { height: 300, type: 'area', toolbar: { show: false } },
+        legend: { show: true },
         colors: ['#0d6efd', '#20c997', '#ffc107', '#dc3545'],
-        dataLabels: {
-            enabled: false,
-        },
-        stroke: {
-            curve: 'smooth',
-        },
-        xaxis: {
-            type: 'datetime',
-            categories: grafica.fechas,
-        },
-        tooltip: {
-            x: {
-                format: 'yyyy-MM-dd HH:mm',
-            },
-        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth' },
+        tooltip: { x: { format: 'yyyy-MM-dd HH:mm' } },
+        // NO pongas xaxis aquí, se agrega después de AJAX
     };
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const sales_chart = new ApexCharts(
+    let sales_chart = null;
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        const grafica = await fetchGraficaData();
+        console.log("Datos iniciales:", grafica);
+        if (grafica) {
+            sales_chart_options.series[0].data = grafica.ph;
+            sales_chart_options.series[1].data = grafica.turbidez;
+            sales_chart_options.series[2].data = grafica.conductividad;
+            sales_chart_options.series[3].data = grafica.nivel_agua;
+            sales_chart_options.xaxis = {
+                type: 'category',
+                categories: convertirFechas(grafica.fechas),
+                labels: {
+                    formatter: function(val) {
+                        let date = new Date(val);
+                        let h = date.getHours().toString().padStart(2, '0');
+                        let m = date.getMinutes().toString().padStart(2, '0');
+                        return `${h}:${m}`;
+                    }
+                }
+            };
+            console.log("Fechas convertidas:", convertirFechas(grafica.fechas));
+        }
+
+        sales_chart = new ApexCharts(
             document.querySelector('#revenue-chart'),
             sales_chart_options,
         );
         sales_chart.render();
+
+        setInterval(async () => {
+            const nuevaGrafica = await fetchGraficaData();
+            console.log("Datos actualizados:", nuevaGrafica);
+            if (nuevaGrafica) {
+                sales_chart.updateOptions({
+                    series: [
+                        { name: 'pH', data: nuevaGrafica.ph },
+                        { name: 'Turvidez', data: nuevaGrafica.turbidez },
+                        { name: 'Conductividad', data: nuevaGrafica.conductividad },
+                        { name: 'Nivel de agua', data: nuevaGrafica.nivel_agua },
+                    ],
+                    xaxis: {
+                        type: 'category',
+                        categories: convertirFechas(nuevaGrafica.fechas),
+                        labels: {
+                            formatter: function(val) {
+                                let date = new Date(val);
+                                let h = date.getHours().toString().padStart(2, '0');
+                                let m = date.getMinutes().toString().padStart(2, '0');
+                                return `${h}:${m}`;
+                            }
+                        }
+                    }
+                });
+            }
+        }, 5000);
     });
 </script>
 <!-- jsvectormap -->
