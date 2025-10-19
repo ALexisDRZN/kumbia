@@ -6,7 +6,7 @@ class GraficasController extends AppController
         $this->mediciones = (new Mediciones())->find("order: fecha_hora DESC");
 
         $fecha_hoy = date('Y-m-d');
-        $fecha_90_dias = date('Y-m-d', strtotime('-90 days'));
+        $fecha_90_dias = date('Y-m-d', strtotime('-60 days'));
 
         // Encuentra la medición más antigua
         $medicion_mas_antigua = (new Mediciones)->find_first("order: fecha_hora ASC");

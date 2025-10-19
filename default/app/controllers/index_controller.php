@@ -15,7 +15,6 @@ class IndexController extends AppController
 
     }
 
-    // ---------- AGREGA ESTE MÉTODO ----------
     public function datos_grafica()
     {
         $fecha_limite = date('Y-m-d H:i:s', strtotime('-1 day'));
@@ -49,16 +48,61 @@ class IndexController extends AppController
         echo json_encode($grafica);
         exit;
     }
-    // -----------------------------------------
 
     public function login()
     {
         View::template('login');
+
     }
+
     public function register()
     {
         View::template('register');
+
+        if (Input::hasPost('usuario')) {
+            $usuario = new Usuarios(Input::post('usuario'));
+
+            // Validaciones
+            if (empty($usuario->username) || empty($usuario->email) || empty($usuario->password)) {
+                Flash::error('Todos los campos son obligatorios');
+                return;
+            }
+            if (!filter_var($usuario->email, FILTER_VALIDATE_EMAIL)) {
+                Flash::error('El email no es válido');
+                return;
+            }
+            if (!Input::post('terminos')) {
+                Flash::error('Debes aceptar los términos');
+                return;
+            }
+
+            Flash::info("Email recibido: '" . $usuario->email . "'");
+
+            $usuario->email = trim($usuario->email);
+
+            if (empty($usuario->email)) {
+                Flash::error('El email es obligatorio');
+                return;
+            }
+
+            $existe = (new Usuarios)->find_first("email = '{$usuario->email}'");
+            if ($existe) {
+                Flash::error('El email ya está registrado');
+                return;
+            }
+
+            // Hashea la contraseña
+            $usuario->password = password_hash($usuario->password, PASSWORD_DEFAULT);
+
+            if ($usuario->save()) {
+                //Flash::success('¡Registro exitoso!');
+                return Redirect::to('/index/login/');
+            } else {
+                Flash::error('No se pudo registrar. Intenta de nuevo.');
+            }
+        }
     }
+
     public function recupera()
     {
         View::template('recupera');
