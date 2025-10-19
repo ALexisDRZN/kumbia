@@ -53,6 +53,43 @@ class IndexController extends AppController
     {
         View::template('login');
 
+        if (Input::hasPost('usuario')) {
+            $usuario = Input::post('usuario');
+
+            // Verifica que ambos campos estén llenos
+            if (empty($usuario['email']) || empty($usuario['password'])) {
+                Flash::error('Debes ingresar tu email y contraseña');
+                return;
+            }
+
+            // Busca usuario por email
+            $user = (new Usuarios)->find_first("email = '{$usuario['email']}'");
+
+            if (!$user) {
+                Flash::error('El email ingresado no está registrado');
+                return;
+            }
+
+            // Verifica la contraseña
+            if (!password_verify($usuario['password'], $user->password)) {
+                Flash::error('La contraseña es incorrecta');
+                return;
+            }
+
+
+            // Si todo está bien, inicia sesión y redirige
+            Session::set('nombre_usuario', $user->username);
+            $this->nombreUsuarioReal = $user->username;
+
+
+
+            //Flash::success('¡Inicio de sesión exitoso!');
+
+
+            return Redirect::to('index/');
+
+        }
+
     }
 
     public function register()

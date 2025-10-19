@@ -410,7 +410,44 @@
     const sparkline3 = new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3);
     sparkline3.render();
 </script>
+<?php
+// Puedes poner esto al final del archivo, antes de </body>
+?>
+<script>
+    function setRealUserName(nombreReal) {
+        localStorage.setItem("usuario_app", nombreReal);
+        document.querySelectorAll('.nombre-usuario').forEach(function(el) {
+            el.textContent = nombreReal;
+        });
+    }
 
+    function getOrCreateGuestUser() {
+        let usuario = localStorage.getItem("usuario_app");
+        if (!usuario) {
+            let randomNum = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+            usuario = "Usuario" + randomNum;
+            localStorage.setItem("usuario_app", usuario);
+        }
+        return usuario;
+    }
+
+    function mostrarNombreUsuario() {
+        let nombre = localStorage.getItem("usuario_app");
+        if (!nombre) nombre = getOrCreateGuestUser();
+        document.querySelectorAll('.nombre-usuario').forEach(function(el) {
+            el.textContent = nombre;
+        });
+    }
+
+    // Solo cuando el DOM esté listo:
+    document.addEventListener("DOMContentLoaded", function() {
+        <?php if (Session::get('nombre_usuario')): ?>
+        setRealUserName("<?= addslashes(Session::get('nombre_usuario')) ?>");
+        <?php else: ?>
+        mostrarNombreUsuario();
+        <?php endif; ?>
+    });
+</script>
 <!--end::Script-->
 </body>
 <!--end::Body-->

@@ -78,10 +78,12 @@
         <div class="card-body login-card-body">
             <p class="login-box-msg">Inicia sesión</p>
 
-            <form action="../index3.html" method="post">
+
+
+            <form method="post">
                 <div class="input-group mb-1">
                     <div class="form-floating">
-                        <input id="loginEmail" type="email" class="form-control" value="" placeholder="" />
+                        <input id="loginEmail" type="email" class="form-control" name="usuario[email]" placeholder="Email" required />
                         <label for="loginEmail">Email</label>
                     </div>
                     <div class="input-group-text">
@@ -90,7 +92,7 @@
                 </div>
                 <div class="input-group mb-1">
                     <div class="form-floating">
-                        <input id="loginPassword" type="password" class="form-control" placeholder="" />
+                        <input id="loginPassword" type="password" class="form-control" name="usuario[password]" placeholder="Contraseña" required />
                         <label for="loginPassword">contrasña</label>
                     </div>
                     <div class="input-group-text">
@@ -101,7 +103,7 @@
                 <div class="row">
                     <div class="col-8 d-inline-flex align-items-center">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <input class="form-check-input" type="checkbox" name="recordar" value="1" id="flexCheckDefault" />
                             <label class="form-check-label" for="flexCheckDefault"> Rocordar </label>
                         </div>
                     </div>
@@ -116,13 +118,6 @@
                 <!--end::Row-->
             </form>
 
-            <div class="social-auth-links text-center mb-3 d-grid gap-2">
-                <p>- O -</p>
-                <a href="#" class="btn btn-danger">
-                    <i class="bi bi-google me-2"></i> Sign in using Google+
-                </a>
-            </div>
-            <!-- /.social-auth-links -->
 
             <p class="mb-1">
                 <a href="forgot-password.html">Olvidé mi contraseña</a>
@@ -134,7 +129,7 @@
         <!-- /.login-card-body -->
     </div>
 </div>
-<!-- /.login-box -->
+
 
 <!--begin::Third Party Plugin(OverlayScrollbars)-->
 <script
@@ -182,8 +177,9 @@
         }
     });
 </script>
-<!--end::OverlayScrollbars Configure-->
-<!--end::Script-->
+
 </body>
 <!--end::Body-->
+
+
 </html>
