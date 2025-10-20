@@ -75,70 +75,153 @@
             <!--begin::Container-->
             <div class="container-fluid">
 
-                <div class="col-12">
-                    <!--begin::Quick Example-->
-                    <div class="card card-primary card-outline mb-4">
-                        <!--begin::Header-->
-                        <div class="card-header">
-                            <div class="card-title">Nuevo reporte</div>
-                        </div>
-                        <!--end::Header-->
-                        <!--begin::Form-->
-                        <form>
-                            <!--begin::Body-->
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label for="user" class="form-label">Usuario</label>
-                                    <input type="text" class="form-control" id="user" name="user" placeholder="Nombre del usuario">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="ubicacion" class="form-label">Ubicación</label>
-                                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" placeholder="Ej: Río San Juan, Qro.">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="contexto" class="form-label">Contexto</label>
-                                    <textarea class="form-control" id="contexto" name="contexto" rows="2" placeholder="Describe el contexto"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="causa" class="form-label">Posible causa de contaminación</label>
-                                    <textarea class="form-control" id="causa" name="causa" rows="2" placeholder="Describe la posible causa"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="foto" class="form-label">Foto</label>
-                                    <div class="input-group">
-                                        <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
-
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="fecha" class="form-label">Fecha</label>
-                                    <input type="date" class="form-control" id="fecha" name="fecha">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="hora" class="form-label">Hora</label>
-                                    <input type="time" class="form-control" id="hora" name="hora">
-                                </div>
-                            </div>
-                            <!--end::Body-->
-                            <!--begin::Footer-->
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Guardar reporte</button>
-                            </div>
-                            <!--end::Footer-->
-                        </form>
-                        <!--end::Form-->
+                <!-- Formulario reportes -->
+                <div class="card card-primary card-outline mb-4">
+                    <div class="card-header">
+                        <div class="card-title">Nuevo reporte</div>
                     </div>
 
+                    <!-- Nota: el controlador espera POST['reporte'][...] y $_FILES['foto'] -->
+                    <form id="reportForm" action="/kumbia/index/reportar/" method="post" enctype="multipart/form-data" novalidate>
+                        <div class="card-body">
+                            <!-- Opción anonimato -->
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="anonimo" name="reporte[anonimo]" value="1">
+                                <label class="form-check-label" for="anonimo">Enviar como anónimo</label>
+                            </div>
 
+                            <!-- Ubicación: auto rellenada por geolocalización -->
+                            <div class="mb-3">
+                                <label for="ubicacion" class="form-label">Ubicación (automática)</label>
+                                <input type="text" class="form-control" id="ubicacion" name="reporte[ubicacion]" placeholder="Latitud,Longitud" readonly required>
+                                <div class="form-text">Permite el acceso a tu ubicación para detectarla automáticamente.</div>
+                            </div>
 
-                    <script>
-                        // Si quieres que el botón abra el modal:
-                        document.getElementById('button-modal-foto').addEventListener('click', function() {
-                            var myModal = new bootstrap.Modal(document.getElementById('modalSeleccionarFoto'));
-                            myModal.show();
-                        });
-                    </script>                    <!--end::Horizontal Form-->
+                            <!-- Selección de zona (desde DB) -->
+                            <div class="mb-3">
+                                <label for="zona_id" class="form-label">Zona</label>
+                                <select id="zona_id" name="reporte[zona_id]" class="form-select" required>
+                                    <option value="">-- Selecciona una zona --</option>
+                                    <?php foreach ($zonas as $z): ?>
+                                        <option value="<?= $z->id ?>"><?= htmlspecialchars($z->nombre) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <!-- Contexto (max 255) -->
+                            <div class="mb-3">
+                                <label for="contexto" class="form-label">Contexto</label>
+                                <textarea class="form-control" id="contexto" name="reporte[contexto]" rows="2" maxlength="255" placeholder="Describe el contexto (máx 255 caracteres)"></textarea>
+                                <div class="form-text"><span id="contextoCount">0</span>/255</div>
+                            </div>
+
+                            <!-- Causa (max 255) -->
+                            <div class="mb-3">
+                                <label for="causa" class="form-label">Posible causa de contaminación</label>
+                                <textarea class="form-control" id="causa" name="reporte[causa]" rows="2" maxlength="255" placeholder="Describe la posible causa (máx 255 caracteres)"></textarea>
+                                <div class="form-text"><span id="causaCount">0</span>/255</div>
+                            </div>
+
+                            <!-- Foto -->
+                            <div class="mb-3">
+                                <label for="foto" class="form-label">Foto</label>
+                                <!-- keep name="foto" because controller reads $_FILES['foto'] -->
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*" capture="environment">
+                                <div class="mt-2">
+                                    <img id="previewFoto" src="" alt="" style="max-width:200px; display:none; border-radius:6px; object-fit:cover;">
+                                </div>
+                            </div>
+
+                            <!-- Campos ocultos -->
+                            <input type="hidden" id="fecha_hora" name="reporte[fecha_hora]" value="">
+                            <input type="hidden" id="lat" name="reporte[lat]" value="">
+                            <input type="hidden" id="lng" name="reporte[lng]" value="">
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="button" id="obtenerUbicacionBtn" class="btn btn-secondary me-2">Obtener ubicación ahora</button>
+                            <button type="submit" class="btn btn-primary">Guardar reporte</button>
+                        </div>
+                    </form>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // contador de caracteres
+                        const contexto = document.getElementById('contexto');
+                        const causa = document.getElementById('causa');
+                        const contextoCount = document.getElementById('contextoCount');
+                        const causaCount = document.getElementById('causaCount');
+                        contexto.addEventListener('input', ()=> contextoCount.textContent = contexto.value.length);
+                        causa.addEventListener('input', ()=> causaCount.textContent = causa.value.length);
+
+                        // preview foto
+                        const fotoInput = document.getElementById('foto');
+                        const preview = document.getElementById('previewFoto');
+                        fotoInput.addEventListener('change', function(e) {
+                            const file = e.target.files[0];
+                            if (!file) { preview.style.display = 'none'; return; }
+                            if (!file.type.startsWith('image/')) return;
+                            const url = URL.createObjectURL(file);
+                            preview.src = url;
+                            preview.style.display = 'block';
+                        });
+
+                        // fecha/hora del dispositivo (rellena reporte[fecha_hora])
+                        function setDeviceDatetime() {
+                            const now = new Date();
+                            const yyyy = now.getFullYear();
+                            const mm = String(now.getMonth()+1).padStart(2,'0');
+                            const dd = String(now.getDate()).padStart(2,'0');
+                            const hh = String(now.getHours()).padStart(2,'0');
+                            const mi = String(now.getMinutes()).padStart(2,'0');
+                            const ss = String(now.getSeconds()).padStart(2,'0');
+                            document.getElementById('fecha_hora').value = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+                        }
+                        setDeviceDatetime();
+                        document.getElementById('reportForm').addEventListener('submit', setDeviceDatetime);
+
+                        // geolocalización -> rellena reporte[ubicacion], reporte[lat], reporte[lng]
+                        const ubicacionInput = document.getElementById('ubicacion');
+                        const latInput = document.getElementById('lat');
+                        const lngInput = document.getElementById('lng');
+
+                        function successGeo(pos) {
+                            const lat = pos.coords.latitude.toFixed(6);
+                            const lng = pos.coords.longitude.toFixed(6);
+                            ubicacionInput.value = `${lat},${lng}`;
+                            latInput.value = lat;
+                            lngInput.value = lng;
+                        }
+                        function errorGeo(err) {
+                            console.warn('geo error', err);
+                        }
+                        function obtenerUbicacion() {
+                            if (!navigator.geolocation) {
+                                alert('Geolocalización no disponible en este navegador.');
+                                return;
+                            }
+                            navigator.geolocation.getCurrentPosition(successGeo, errorGeo, { enableHighAccuracy: true, timeout: 10000 });
+                        }
+
+                        document.getElementById('obtenerUbicacionBtn').addEventListener('click', obtenerUbicacion);
+                        obtenerUbicacion();
+
+                        // validación antes de enviar
+                        document.getElementById('reportForm').addEventListener('submit', function (e) {
+                            if (!latInput.value || !lngInput.value) {
+                                e.preventDefault();
+                                alert('Por favor permite el acceso a tu ubicación o pulsa "Obtener ubicación ahora".');
+                                return false;
+                            }
+                            if (contexto.value.length > 255 || causa.value.length > 255) {
+                                e.preventDefault();
+                                alert('Contexto o causa exceden 255 caracteres.');
+                                return false;
+                            }
+                        });
+                    });
+                </script>
 
 
                 <!--begin::Row-->

@@ -8,7 +8,6 @@ class GraficasController extends AppController
         $fecha_hoy = date('Y-m-d');
         $fecha_90_dias = date('Y-m-d', strtotime('-60 days'));
 
-        // Encuentra la medición más antigua
         $medicion_mas_antigua = (new Mediciones)->find_first("order: fecha_hora ASC");
         if ($medicion_mas_antigua) {
             $fecha_mas_antigua = date('Y-m-d', strtotime($medicion_mas_antigua->fecha_hora));
@@ -28,7 +27,6 @@ class GraficasController extends AppController
             'fechas' => [],
         ];
 
-        // Formato para mostrar el rango
         $meses = [
             'Jan' => 'Ene', 'Feb' => 'Feb', 'Mar' => 'Mar', 'Apr' => 'Abr',
             'May' => 'May', 'Jun' => 'Jun', 'Jul' => 'Jul', 'Aug' => 'Ago',

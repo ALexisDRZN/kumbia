@@ -81,11 +81,6 @@ class IndexController extends AppController
             Session::set('nombre_usuario', $user->username);
             $this->nombreUsuarioReal = $user->username;
 
-
-
-            //Flash::success('¡Inicio de sesión exitoso!');
-
-
             return Redirect::to('index/');
 
         }
@@ -143,5 +138,33 @@ class IndexController extends AppController
     public function recupera()
     {
         View::template('recupera');
+    }
+
+    public function logout()
+    {
+        if (method_exists('Session', 'delete')) {
+            Session::delete('nombre_usuario');
+        } else {
+            if (isset($_SESSION['nombre_usuario'])) {
+                unset($_SESSION['nombre_usuario']);
+            }
+        }
+
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $_SESSION = [];
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+
+        @session_destroy();
+        return Redirect::to('index/');
     }
 }
