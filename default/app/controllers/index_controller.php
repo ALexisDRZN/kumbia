@@ -75,9 +75,7 @@ class IndexController extends AppController
                 Flash::error('La contraseña es incorrecta');
                 return;
             }
-
-
-            // Si todo está bien, inicia sesión y redirige
+            Session::set('user_id', $user->id);
             Session::set('nombre_usuario', $user->username);
             $this->nombreUsuarioReal = $user->username;
 

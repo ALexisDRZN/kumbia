@@ -1,40 +1,74 @@
 <?php
 class ReportesController extends AppController
 {
+    // Lista simple de reportes y zonas para la vista
     public function index()
     {
-        $this->subtitle = 'Reportes';
-        $this->title    = 'Nuevo reporte';
-        $this->zonas    = (new Zonas)->find();
+        $this->reportes = (new Reportes)->find("order: id DESC");
+        // cargar zonas si existe el modelo
+        $this->zonas = class_exists('Zonas') ? (new Zonas)->find() : [];
+    }
 
-        if (!Input::hasPost('reporte')) return;
+    public function guardar()
+    {
 
-        $p = Input::post('reporte');
+        $params = Input::post('reporte');
 
-        $r = new Reportes();
-        $r->usuario_id  = (empty($p['anonimo']) && Session::get('usuario_id')) ? Session::get('usuario_id') : null;
-        $r->zona_id     = (int)($p['zona_id'] ?? 0);
-        $r->contexto    = mb_substr(trim($p['contexto'] ?? ''), 0, 255);
-        $r->causa       = mb_substr(trim($p['causa'] ?? ''), 0, 255);
-        $r->ubicacion   = $p['ubicacion'] ?? null;
-        if (property_exists($r, 'lat')) $r->lat = $p['lat'] ?? null;
-        if (property_exists($r, 'lng')) $r->lng = $p['lng'] ?? null;
-        $r->fecha_hora  = $p['fecha_hora'] ?? date('Y-m-d H:i:s');
+        $isAnon = isset($params['anonimo']) && ((string)$params['anonimo'] === '1' || (string)$params['anonimo'] === 'on');
 
-        if (!empty($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-            $nombre = 'r_'.time().'_'.bin2hex(random_bytes(4)).'.'.$ext;
-            $dir = APP_PATH . 'public' . DS . 'uploads' . DS . 'reportes' . DS;
-            if (!is_dir($dir)) mkdir($dir, 0755, true);
-            if (move_uploaded_file($_FILES['foto']['tmp_name'], $dir . $nombre)) {
-                $r->foto = $nombre;
+
+        $userId = Session::get('user_id');
+        if (!$userId) {
+            Flash::error('Debes iniciar sesión.');
+            return Redirect::to('index/login/');
+        }
+        $params['usuario_id'] = $userId;
+
+        if ($isAnon) {
+            $params['user_2'] = 'Anonimo';
+            $params['reportado_por'] = 'Anonimo';
+        } else {
+            // usuario conocido
+            $params['user_2'] = $userId;
+            // opcional: asegurarte que no quede reportado_por de antes
+            if (isset($params['reportado_por'])) {
+                unset($params['reportado_por']);
+            }
+        }
+        /*
+        if (empty($params['lat']) || empty($params['lng'])) {
+            Flash::error('Ubicación requerida.');
+            return Redirect::to('/reportes');
+        }
+        */
+        if (empty($params['zona_id'])) {
+            Flash::error('Debes seleccionar una zona.');
+            return Redirect::to('/reportes/');
+        }
+
+        $reporte = new Reportes($params);
+        if (!$reporte->create()) {
+            Flash::error('No se pudo crear el reporte.');
+            return Redirect::to('/reportes/');
+        }
+
+        require_once CORE_PATH . 'libs/file_uploader/simple_uploader.php';
+
+
+        if (!empty($_FILES['archivo']) && $_FILES['archivo']['error'] === UPLOAD_ERR_OK) {
+            $rutaPublica = SimpleUploader::upload($_FILES['archivo'], $reporte);
+            if ($rutaPublica) {
+                // opcional: guardar la ruta relativa o basename en la BD
+                $reporte->foto = basename($rutaPublica); // o $rutaPublica si prefieres
+                $reporte->save();
+                Flash::info('Archivo subido correctamente.');
+            } else {
+                Flash::warning('La subida falló. Revisa permisos, extensión o tamaño.');
             }
         }
 
-        if ($r->create()) {
-            return Redirect::to('index/reportes/');
-        }
 
-        Flash::error('No se pudo guardar el reporte');
+        Flash::valid('Reporte guardado correctamente.');
+        return Redirect::to('/reportes/');
     }
 }

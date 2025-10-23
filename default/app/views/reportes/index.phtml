@@ -82,21 +82,21 @@
                     </div>
 
                     <!-- Nota: el controlador espera POST['reporte'][...] y $_FILES['foto'] -->
-                    <form id="reportForm" action="/kumbia/index/reportar/" method="post" enctype="multipart/form-data" novalidate>
+                    <form id="reportForm" action="/kumbia/reportes/guardar/" method="post" enctype="multipart/form-data" novalidate>
                         <div class="card-body">
+                            <label for="ubicacion" class="form-label">Deceas enviarlo como anónimo <span class="nombre-usuario"></span> </label>
                             <!-- Opción anonimato -->
                             <div class="form-check form-switch mb-3">
                                 <input class="form-check-input" type="checkbox" id="anonimo" name="reporte[anonimo]" value="1">
                                 <label class="form-check-label" for="anonimo">Enviar como anónimo</label>
                             </div>
-
-                            <!-- Ubicación: auto rellenada por geolocalización -->
+                            <!--
                             <div class="mb-3">
-                                <label for="ubicacion" class="form-label">Ubicación (automática)</label>
+                                <label for="ubicacion" class="form-label">Ubicación</label>
                                 <input type="text" class="form-control" id="ubicacion" name="reporte[ubicacion]" placeholder="Latitud,Longitud" readonly required>
                                 <div class="form-text">Permite el acceso a tu ubicación para detectarla automáticamente.</div>
                             </div>
-
+                            -->
                             <!-- Selección de zona (desde DB) -->
                             <div class="mb-3">
                                 <label for="zona_id" class="form-label">Zona</label>
@@ -124,12 +124,9 @@
 
                             <!-- Foto -->
                             <div class="mb-3">
-                                <label for="foto" class="form-label">Foto</label>
-                                <!-- keep name="foto" because controller reads $_FILES['foto'] -->
-                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*" capture="environment">
-                                <div class="mt-2">
-                                    <img id="previewFoto" src="" alt="" style="max-width:200px; display:none; border-radius:6px; object-fit:cover;">
-                                </div>
+                                <label for="causa" class="form-label">Fotografia</label>
+                                <input type="file" id="archivo" name="archivo" class="form-control" accept="image/*,application/pdf">
+                                <div class="form-text">Formatos: JPG, PNG, GIF, WebP, PDF</div>
                             </div>
 
                             <!-- Campos ocultos -->
@@ -144,84 +141,6 @@
                         </div>
                     </form>
                 </div>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        // contador de caracteres
-                        const contexto = document.getElementById('contexto');
-                        const causa = document.getElementById('causa');
-                        const contextoCount = document.getElementById('contextoCount');
-                        const causaCount = document.getElementById('causaCount');
-                        contexto.addEventListener('input', ()=> contextoCount.textContent = contexto.value.length);
-                        causa.addEventListener('input', ()=> causaCount.textContent = causa.value.length);
-
-                        // preview foto
-                        const fotoInput = document.getElementById('foto');
-                        const preview = document.getElementById('previewFoto');
-                        fotoInput.addEventListener('change', function(e) {
-                            const file = e.target.files[0];
-                            if (!file) { preview.style.display = 'none'; return; }
-                            if (!file.type.startsWith('image/')) return;
-                            const url = URL.createObjectURL(file);
-                            preview.src = url;
-                            preview.style.display = 'block';
-                        });
-
-                        // fecha/hora del dispositivo (rellena reporte[fecha_hora])
-                        function setDeviceDatetime() {
-                            const now = new Date();
-                            const yyyy = now.getFullYear();
-                            const mm = String(now.getMonth()+1).padStart(2,'0');
-                            const dd = String(now.getDate()).padStart(2,'0');
-                            const hh = String(now.getHours()).padStart(2,'0');
-                            const mi = String(now.getMinutes()).padStart(2,'0');
-                            const ss = String(now.getSeconds()).padStart(2,'0');
-                            document.getElementById('fecha_hora').value = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-                        }
-                        setDeviceDatetime();
-                        document.getElementById('reportForm').addEventListener('submit', setDeviceDatetime);
-
-                        // geolocalización -> rellena reporte[ubicacion], reporte[lat], reporte[lng]
-                        const ubicacionInput = document.getElementById('ubicacion');
-                        const latInput = document.getElementById('lat');
-                        const lngInput = document.getElementById('lng');
-
-                        function successGeo(pos) {
-                            const lat = pos.coords.latitude.toFixed(6);
-                            const lng = pos.coords.longitude.toFixed(6);
-                            ubicacionInput.value = `${lat},${lng}`;
-                            latInput.value = lat;
-                            lngInput.value = lng;
-                        }
-                        function errorGeo(err) {
-                            console.warn('geo error', err);
-                        }
-                        function obtenerUbicacion() {
-                            if (!navigator.geolocation) {
-                                alert('Geolocalización no disponible en este navegador.');
-                                return;
-                            }
-                            navigator.geolocation.getCurrentPosition(successGeo, errorGeo, { enableHighAccuracy: true, timeout: 10000 });
-                        }
-
-                        document.getElementById('obtenerUbicacionBtn').addEventListener('click', obtenerUbicacion);
-                        obtenerUbicacion();
-
-                        // validación antes de enviar
-                        document.getElementById('reportForm').addEventListener('submit', function (e) {
-                            if (!latInput.value || !lngInput.value) {
-                                e.preventDefault();
-                                alert('Por favor permite el acceso a tu ubicación o pulsa "Obtener ubicación ahora".');
-                                return false;
-                            }
-                            if (contexto.value.length > 255 || causa.value.length > 255) {
-                                e.preventDefault();
-                                alert('Contexto o causa exceden 255 caracteres.');
-                                return false;
-                            }
-                        });
-                    });
-                </script>
 
 
                 <!--begin::Row-->
@@ -259,7 +178,8 @@
                                             <td>12:00</td>
                                         </tr>
                                         </tbody>
-                                    </table>                                </div><!-- /.table-responsive -->
+                                    </table>
+                                </div><!-- /.table-responsive -->
                             </div>
                         </div>
                     </div>
