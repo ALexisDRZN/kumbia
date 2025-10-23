@@ -4,6 +4,7 @@ class ReportesController extends AppController
     // Lista simple de reportes y zonas para la vista
     public function index()
     {
+        //$reportes = Load::model('reportes')->find($id);
         $this->reportes = (new Reportes)->find("order: id DESC");
         // cargar zonas si existe el modelo
         $this->zonas = class_exists('Zonas') ? (new Zonas)->find() : [];
@@ -25,12 +26,10 @@ class ReportesController extends AppController
         $params['usuario_id'] = $userId;
 
         if ($isAnon) {
-            $params['user_2'] = 'Anonimo';
+            $params['user_2'] = Session::get('nombre_usuario');
             $params['reportado_por'] = 'Anonimo';
         } else {
-            // usuario conocido
             $params['user_2'] = $userId;
-            // opcional: asegurarte que no quede reportado_por de antes
             if (isset($params['reportado_por'])) {
                 unset($params['reportado_por']);
             }

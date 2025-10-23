@@ -2,5 +2,10 @@
 // Modelo mínimo para la tabla `reportes`
 class Reportes extends ActiveRecord
 {
-    // Si necesitas validaciones, relaciones o configuraciones las puedes añadir aquí.
+    public function initialize()
+    {
+
+        $this->belongs_to('usuarios', 'model: usuarios', 'fk: usuario_id');
+        $this->belongs_to('zonas', 'model: zonas', 'fk: zona_id');
+    }
 }

@@ -136,7 +136,6 @@
                         </div>
 
                         <div class="card-footer">
-                            <button type="button" id="obtenerUbicacionBtn" class="btn btn-secondary me-2">Obtener ubicación ahora</button>
                             <button type="submit" class="btn btn-primary">Guardar reporte</button>
                         </div>
                     </form>
@@ -144,6 +143,7 @@
 
 
                 <!--begin::Row-->
+
                 <div class="row">
                     <div class="col-12"> <!-- Cambiado a col-12 para ocupar todo el ancho -->
                         <div class="card mb-4 w-100">
@@ -160,23 +160,22 @@
                                             <th>Ubicación</th>
                                             <th>Contexto</th>
                                             <th>Posible causa de contaminación</th>
-                                            <th>Foto</th>
                                             <th>Fecha</th>
-                                            <th>Hora</th>
+                                            <th>Foto</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr class="align-middle">
-                                            <td>Juan Pérez</td>
-                                            <td>Río San Juan, Qro.</td>
-                                            <td>Agua con coloración inusual</td>
-                                            <td>Descarga de aguas residuales industriales</td>
-                                            <td>
-                                                <img src="https://via.placeholder.com/60x40?text=Foto" alt="foto" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;">
-                                            </td>
-                                            <td>10/10/2025</td>
-                                            <td>12:00</td>
-                                        </tr>
+                                            <?php foreach ($reportes as $f): ?>
+                                                <tr class="align-middle">
+                                                    <td><?= $f-> user_2 ?></td>
+                                                    <td><?= $f-> getzonas() -> nombre ?></td>
+                                                    <td><?= $f->contexto ?></td>
+                                                    <td><?= $f->causa ?></td>
+                                                    <td><?= $f->fecha_hora ?></td>
+                                                    <td><?= Bhtml::img("reportes/{$f->id}.jpg", "", ["width" => "128px"]) ?></td>
+
+                                                </tr>
+                                            <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div><!-- /.table-responsive -->
@@ -184,6 +183,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!--end::Row-->
             </div>
             <!--end::Container-->
