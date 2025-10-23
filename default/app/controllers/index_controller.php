@@ -1,18 +1,11 @@
 <?php
-
-/**
- * Controller por defecto si no se usa el routes
- *
- */
 class IndexController extends AppController
 {
-
     public function index()
     {
         $this->subtitle = 'Medición';
         $this->title = 'Última Medición';
         $this->medicion = (new Mediciones)->find_first("order: id DESC");
-
     }
 
     public function datos_grafica()
