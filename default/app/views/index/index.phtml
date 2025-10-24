@@ -232,24 +232,20 @@
     <!--end::Container-->
 </div>
 
-<!-- Si tu layout ya trae leaflet.js elimina la siguiente línea -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // --- Opciones comunes para los mapas ---
         const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         const tileAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>';
 
-        // --- 1. Mapa Mundial (en #world-map) ---
         const worldMap = L.map('world-map').setView([20.39, -100.00], 10);
         L.tileLayer(tileUrl, {
             attribution: tileAttribution,
             maxZoom: 18,
         }).addTo(worldMap);
 
-        // --- 2. Mapas de Zonas (en #sparkline-1, 2, 3) ---
         const map1 = L.map('sparkline-1', { zoomControl: false }).setView([20.37020147646502, -100.00055783103], 15);
         L.tileLayer(tileUrl, { attribution: 'OSM' }).addTo(map1);
         //L.marker([20.37020147646502, -100.00055783103]).addTo(map1);
@@ -261,25 +257,15 @@
         L.tileLayer(tileUrl, { attribution: 'OSM' }).addTo(map3);
 
 
-        // ==========================================================
-        // === 3. (NUEVO) AÑADIR CLICK LISTENERS A LOS MAPAS PEQUEÑOS ===
-        // ==========================================================
-
-        // Al hacer click en el DIV del mapa 1...
         document.getElementById('sparkline-1').addEventListener('click', function() {
-            // ...mueve el mapa grande a la vista del mapa 1
             worldMap.flyTo(map1.getCenter(), map1.getZoom());
         });
 
-        // Al hacer click en el DIV del mapa 2...
         document.getElementById('sparkline-2').addEventListener('click', function() {
-            // ...mueve el mapa grande a la vista del mapa 2
             worldMap.flyTo(map2.getCenter(), map2.getZoom());
         });
 
-        // Al hacer click en el DIV del mapa 3...
         document.getElementById('sparkline-3').addEventListener('click', function() {
-            // ...mueve el mapa grande a la vista del mapa 3
             worldMap.flyTo(map3.getCenter(), map3.getZoom());
         });
 
