@@ -8,7 +8,7 @@ return [
         /**
          * host: ip o nombre del host de la base de datos
          */
-        'host'     => '64.225.121.158',
+        'host'     => '165.22.103.119',
         /**
          * username: usuario con permisos en la base de datos
          */
@@ -16,7 +16,7 @@ return [
         /**
          * password: clave del usuario de la base de datos
          */
-        'password' => 'TU_CLAVE_WEB',
+        'password' => '7856@miweb',
         /**
          * test: nombre de la base de datos
          */
@@ -37,7 +37,7 @@ return [
          * pdo: activar conexiones PDO (On/Off); descomentar para usar
          */
         //'pdo' => 'On',
-        ],
+    ],
 
     'production' => [
         /**
@@ -72,7 +72,7 @@ return [
          * pdo: activar conexiones PDO (OnOff); descomentar para usar
          */
         //'pdo' => 'On',
-        ],
+    ],
 ];
 
 /**
